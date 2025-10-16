@@ -9,7 +9,9 @@ namespace Code_NT106.Q14._2_Lab02_24521213
 
         private void btnBai01_Click(object sender, EventArgs e)
         {
-
+            this.Hide();
+            new Bai01().ShowDialog();
+            this.Show();
         }
 
         private void btnBai2_Click(object sender, EventArgs e)
@@ -40,11 +42,6 @@ namespace Code_NT106.Q14._2_Lab02_24521213
         private void btnBai7_Click(object sender, EventArgs e)
         {
 
-        }
-
-        private void btnExit_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
         }
     }
 }

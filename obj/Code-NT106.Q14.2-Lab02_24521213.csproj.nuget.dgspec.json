@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\NT106.Q14\\Code-NT106.Q14.2-Lab02_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Code-NT106.Q14.2-Lab02_24521213.csproj": {}
+    "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Code-NT106.Q14.2-Lab02_24521213.csproj": {}
   },
   "projects": {
-    "D:\\NT106.Q14\\Code-NT106.Q14.2-Lab02_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Code-NT106.Q14.2-Lab02_24521213.csproj": {
+    "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Code-NT106.Q14.2-Lab02_24521213.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\NT106.Q14\\Code-NT106.Q14.2-Lab02_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Code-NT106.Q14.2-Lab02_24521213.csproj",
+        "projectUniqueName": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Code-NT106.Q14.2-Lab02_24521213.csproj",
         "projectName": "Code-NT106.Q14.2-Lab02_24521213",
-        "projectPath": "D:\\NT106.Q14\\Code-NT106.Q14.2-Lab02_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Code-NT106.Q14.2-Lab02_24521213.csproj",
+        "projectPath": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Code-NT106.Q14.2-Lab02_24521213.csproj",
         "packagesPath": "C:\\Users\\Shiba\\.nuget\\packages\\",
-        "outputPath": "D:\\NT106.Q14\\Code-NT106.Q14.2-Lab02_24521213\\Code-NT106.Q14.2-Lab02_24521213\\obj\\",
+        "outputPath": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Shiba\\AppData\\Roaming\\NuGet\\NuGet.Config",

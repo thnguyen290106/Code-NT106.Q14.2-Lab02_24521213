@@ -36,7 +36,6 @@
             btnBai5 = new Button();
             btnBai6 = new Button();
             btnBai7 = new Button();
-            btnExit = new Button();
             SuspendLayout();
             // 
             // btnBai01
@@ -126,23 +125,11 @@
             btnBai7.UseVisualStyleBackColor = true;
             btnBai7.Click += btnBai7_Click;
             // 
-            // btnExit
-            // 
-            btnExit.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnExit.Location = new Point(564, 332);
-            btnExit.Name = "btnExit";
-            btnExit.Size = new Size(224, 113);
-            btnExit.TabIndex = 8;
-            btnExit.Text = "Thoát";
-            btnExit.UseVisualStyleBackColor = true;
-            btnExit.Click += btnExit_Click;
-            // 
-            // Form1
+            // Dashboard
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(btnExit);
             Controls.Add(btnBai7);
             Controls.Add(btnBai6);
             Controls.Add(btnBai5);
@@ -151,7 +138,7 @@
             Controls.Add(btnBai2);
             Controls.Add(label1);
             Controls.Add(btnBai01);
-            Name = "Form1";
+            Name = "Dashboard";
             Text = "Form1";
             ResumeLayout(false);
             PerformLayout();
@@ -167,6 +154,5 @@
         private Button btnBai5;
         private Button btnBai6;
         private Button btnBai7;
-        private Button btnExit;
     }
 }
