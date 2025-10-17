@@ -57,9 +57,11 @@
             // 
             // txtContentOfFile
             // 
+            txtContentOfFile.BackColor = Color.White;
             txtContentOfFile.Location = new Point(295, 2);
             txtContentOfFile.Multiline = true;
             txtContentOfFile.Name = "txtContentOfFile";
+            txtContentOfFile.ReadOnly = true;
             txtContentOfFile.Size = new Size(493, 445);
             txtContentOfFile.TabIndex = 5;
             txtContentOfFile.TextChanged += txtContentOfFile_TextChanged;
@@ -73,7 +75,7 @@
             Controls.Add(btnWriteFile);
             Controls.Add(btnReadFile);
             Name = "Bai01";
-            Text = "Bai01";
+            Text = "Bài 01 – Ghi và Đọc file";
             ResumeLayout(false);
             PerformLayout();
         }

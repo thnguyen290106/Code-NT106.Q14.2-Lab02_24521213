@@ -1,0 +1,141 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+
+namespace Code_NT106.Q14._2_Lab02_24521213
+{
+    public partial class Bai03 : Form
+    {
+        public Bai03()
+        {
+            InitializeComponent();
+        }
+
+        // Hàm này nhận vào một chuỗi biểu thức (ví dụ: "1 + 2 - 3 * 4")
+        // Trả về kết quả tính toán dưới dạng double.
+        // Lưu ý: hàm này xử lý phép toán theo thứ tự từ trái sang phải (không xử lý thứ tự ưu tiên toán tử hoặc ngoặc đa cấp).
+        private double EvaluateExpression(string expression)
+        {
+            // Loại bỏ khoảng trắng ở đầu và cuối chuỗi
+            expression = expression.Trim();
+            
+            // Danh sách token: sẽ chứa xen kẽ số và toán tử, ví dụ: ["1", "+", "2", "-", "3"]
+            List<string> tokens = new List<string>();
+            string currentNumber = ""; // dùng để xây dựng số hiện tại khi duyệt ký tự
+            
+            // Duyệt từng ký tự của chuỗi biểu thức
+            for (int i = 0; i < expression.Length; i++)
+            {
+                // Nếu ký tự là chữ số hoặc dấu chấm (phần thập phân) -> nối vào currentNumber
+                if (char.IsDigit(expression[i]) || expression[i] == '.')
+                {
+                    currentNumber += expression[i];
+                }
+                // Nếu là toán tử (+, -, *, /) -> kết thúc số hiện tại (nếu có) rồi thêm toán tử vào tokens
+                else if (expression[i] == '+' || expression[i] == '-' || expression[i] == '*' || expression[i] == '/')
+                {
+                    if (currentNumber != "")
+                    {
+                        tokens.Add(currentNumber); // thêm số hoàn chỉnh vào tokens
+                        currentNumber = "";       // reset để bắt số tiếp theo
+                    }
+                    tokens.Add(expression[i].ToString()); // thêm toán tử
+                }
+                // Bỏ qua khoảng trắng giữa các token
+                else if (!char.IsWhiteSpace(expression[i]))
+                {
+                    // Nếu gặp ký tự không mong đợi (không phải số, dấu chấm, toán tử, khoảng trắng)
+                    throw new ArgumentException("Biểu thức không hợp lệ");
+                }
+            }
+            
+            // Sau khi duyệt xong, nếu còn số dang dở thì thêm vào tokens
+            if (currentNumber != "")
+                tokens.Add(currentNumber);
+
+            // Nếu không có token hoặc token đầu tiên không phải số sẽ gây lỗi
+            if (tokens.Count == 0)
+                throw new ArgumentException("Biểu thức rỗng hoặc không hợp lệ");
+
+            // Khởi tạo kết quả bằng số đầu tiên
+            double result = double.Parse(tokens[0]);
+
+            // Duyệt token theo cặp: (toán tử, số)
+            // Ví dụ tokens: ["1", "+", "2", "*", "3"] -> bắt đầu từ i=1 với op = "+" và num = 2
+            for (int i = 1; i < tokens.Count; i += 2)
+            {
+                string op = tokens[i];
+                // Lấy số đứng sau toán tử
+                double num = double.Parse(tokens[i + 1]);
+                
+                // Thực hiện phép toán tương ứng
+                switch (op)
+                {
+                    case "+":
+                        result += num;
+                        break;
+                    case "-":
+                        result -= num;
+                        break;
+                    case "*":
+                        result *= num;
+                        break;
+                    case "/":
+                        if (num == 0)
+                            throw new DivideByZeroException();
+                        result /= num;
+                        break;
+                }
+            }
+            
+            // Trả về kết quả cuối cùng
+            return result;
+        }
+
+        // Sự kiện khi người dùng bấm nút Read (đọc file input3.txt và ghi kết quả vào output3.txt)
+        private void btnRead_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Đọc tất cả dòng từ file input3.txt (mỗi dòng là một biểu thức)
+                string[] lines = File.ReadAllLines("input3.txt");
+                List<string> outputLines = new List<string>();
+
+                foreach (string line in lines)
+                {
+                    // Bỏ qua dòng trống
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    
+                    // Tính giá trị biểu thức (hàm EvaluateExpression xử lý)
+                    double result = EvaluateExpression(line);
+
+                    // Tạo chuỗi kết quả theo định dạng: "<biểu thức> = <kết quả>"
+                    // Lưu ý: kết quả ở dạng double, nếu muốn hiển thị theo định dạng khác có thể dùng String.Format hoặc ToString với định dạng.
+                    string outputLine = $"{line} = {result}";
+                    outputLines.Add(outputLine);
+                }
+
+                // Ghi tất cả dòng kết quả vào file output3.txt (ghi đè nếu đã tồn tại)
+                File.WriteAllLines("output3.txt", outputLines);
+                MessageBox.Show("Đã xử lý và ghi kết quả vào file output3.txt thành công!", "Thông báo");
+            }
+            catch (FileNotFoundException)
+            {
+                // Xử lý khi không tìm thấy file input3.txt
+                MessageBox.Show("Không tìm thấy file input3.txt!", "Lỗi");
+            }
+            catch (Exception ex)
+            {
+                // Bắt các lỗi khác (ví dụ: biểu thức không hợp lệ, chia cho 0, lỗi IO...)
+                MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}", "Lỗi");
+            }
+        }
+    }
+}

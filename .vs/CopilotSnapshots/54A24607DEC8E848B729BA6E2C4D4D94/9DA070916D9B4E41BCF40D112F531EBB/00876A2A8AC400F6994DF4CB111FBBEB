@@ -1,0 +1,278 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
+
+namespace Code_NT106.Q14._2_Lab02_24521213
+{
+    public struct Student
+    {
+        public string Name;
+        public int ID;
+        public string Phone;
+        public float Course1;
+        public float Course2;
+        public float Course3;
+        public float Average;
+    }
+
+    public partial class Bai04 : Form
+    {
+        private List<Student> studentList = new List<Student>();
+        private int currentPage = 0;
+
+        public Bai04()
+        {
+            InitializeComponent();
+        }
+
+        // ========== KIỂM TRA DỮ LIỆU NHẬP ==========
+        private bool Legit(string[] lines)
+        {
+            if (lines.Length < 6)
+            {
+                MessageBox.Show("Vui lòng nhập đủ 6 dòng thông tin!");
+                return false;
+            }
+
+            // Kiểm tra tên
+            if (string.IsNullOrWhiteSpace(lines[0]))
+            {
+                MessageBox.Show("Tên không được rỗng!");
+                return false;
+            }
+
+            // Kiểm tra MSSV (8 chữ số)
+            if (lines[1].Trim().Length != 8)
+            {
+                MessageBox.Show("MSSV phải là số có 8 chữ số!");
+                return false;
+            }
+
+            // Kiểm tra số điện thoại (10 chữ số, bắt đầu 0)
+            string phone = lines[2].Trim();
+            if (phone.Length != 10 || !phone.StartsWith("0"))
+            {
+                MessageBox.Show("Số điện thoại phải có 10 chữ số và bắt đầu bằng 0!");
+                return false;
+            }
+
+            // Kiểm tra điểm (0-10)
+            if (!float.TryParse(lines[3].Trim(), out float c1) || c1 < 0 || c1 > 10)
+            {
+                MessageBox.Show("Điểm môn 1 phải từ 0 đến 10!");
+                return false;
+            }
+
+            if (!float.TryParse(lines[4].Trim(), out float c2) || c2 < 0 || c2 > 10)
+            {
+                MessageBox.Show("Điểm môn 2 phải từ 0 đến 10!");
+                return false;
+            }
+
+            if (!float.TryParse(lines[5].Trim(), out float c3) || c3 < 0 || c3 > 10)
+            {
+                MessageBox.Show("Điểm môn 3 phải từ 0 đến 10!");
+                return false;
+            }
+            return true;
+        }
+
+        // ========== NÚT ADD - THÊM VÀO FILE INPUT4.TXT ==========
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            string content = textBox2.Text.Trim();
+
+            if (string.IsNullOrEmpty(content))
+            {
+                MessageBox.Show("Vui lòng nhập thông tin sinh viên!");
+                return;
+            }
+
+            // Tách thành các dòng
+            string[] lines = content.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+
+            // Kiểm tra validation
+            if (!Legit(lines)) return;
+
+            // Tạo sinh viên
+            Student student;
+            student.Name = lines[0].Trim();
+            student.ID = int.Parse(lines[1].Trim());
+            student.Phone = lines[2].Trim();
+            student.Course1 = float.Parse(lines[3].Trim());
+            student.Course2 = float.Parse(lines[4].Trim());
+            student.Course3 = float.Parse(lines[5].Trim());
+            student.Average = 0;
+
+            // Ghi vào file input4.txt (append)
+            StreamWriter sw = new StreamWriter("input4.txt", true);
+            sw.WriteLine(student.Name);
+            sw.WriteLine(student.ID);
+            sw.WriteLine(student.Phone);
+            sw.WriteLine(student.Course1);
+            sw.WriteLine(student.Course2);
+            sw.WriteLine(student.Course3);
+            sw.WriteLine();  // Dòng trắng
+            sw.Close();
+
+            MessageBox.Show("Đã thêm sinh viên vào input4.txt!");
+            textBox2.Clear();
+        }
+
+        // ========== NÚT WRITE - ĐỌC INPUT4.TXT VÀ GHI OUTPUT4.TXT ==========
+        private void btnWrite_Click(object sender, EventArgs e)
+        {
+            // Kiểm tra file tồn tại
+            if (!File.Exists("input4.txt"))
+            {
+                MessageBox.Show("Không tìm thấy file input4.txt!");
+                return;
+            }
+
+            // Đọc tất cả dòng
+            string[] lines = File.ReadAllLines("input4.txt");
+            List<Student> tempList = new List<Student>();
+
+            // Đọc từng sinh viên
+            for (int i = 0; i < lines.Length; i++)
+            {
+                // Bỏ qua dòng trống
+                if (string.IsNullOrWhiteSpace(lines[i])) continue;
+
+                // Kiểm tra đủ 6 dòng không
+                if (i + 5 >= lines.Length) break;
+
+                // Tạo sinh viên
+                Student student;
+                student.Name = lines[i].Trim();
+                student.ID = int.Parse(lines[i + 1].Trim());
+                student.Phone = lines[i + 2].Trim();
+                student.Course1 = float.Parse(lines[i + 3].Trim());
+                student.Course2 = float.Parse(lines[i + 4].Trim());
+                student.Course3 = float.Parse(lines[i + 5].Trim());
+
+                // Tính điểm trung bình
+                student.Average = (student.Course1 + student.Course2 + student.Course3) / 3;
+
+                tempList.Add(student);
+                i += 6;  // Nhảy qua 6 dòng + 1 dòng trắng
+            }
+
+            // Ghi ra output4.txt
+            StreamWriter sw = new StreamWriter("output4.txt");
+
+            foreach (var student in tempList)
+            {
+                sw.WriteLine(student.Name);
+                sw.WriteLine(student.ID);
+                sw.WriteLine(student.Phone);
+                sw.WriteLine(student.Course1);
+                sw.WriteLine(student.Course2);
+                sw.WriteLine(student.Course3);
+                sw.WriteLine(student.Average.ToString("F2"));
+                sw.WriteLine();  // Dòng trắng
+            }
+
+            sw.Close();
+
+            MessageBox.Show("Đã đọc file input4.txt, tính điểm TB và ghi vào file output4.txt!\nTổng: " + tempList.Count + " sinh viên");
+        }
+
+        // ========== NÚT READ - ĐỌC VÀ HIỂN THỊ BÊN PHẢI ==========
+        private void btnRead_Click(object sender, EventArgs e)
+        {
+            // Kiểm tra file
+            if (!File.Exists("input4.txt"))
+            {
+                MessageBox.Show("Không tìm thấy file input4.txt!"); return;
+            }
+
+            // Đọc file
+            string[] lines = File.ReadAllLines("input4.txt");
+            studentList = new List<Student>();
+
+            // Đọc từng sinh viên
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (string.IsNullOrWhiteSpace(lines[i])) continue;
+                if (i + 5 >= lines.Length) break;
+
+                Student student;
+                student.Name = lines[i].Trim();
+                student.ID = int.Parse(lines[i + 1].Trim());
+                student.Phone = lines[i + 2].Trim();
+                student.Course1 = float.Parse(lines[i + 3].Trim());
+                student.Course2 = float.Parse(lines[i + 4].Trim());
+                student.Course3 = float.Parse(lines[i + 5].Trim());
+                student.Average = (student.Course1 + student.Course2 + student.Course3) / 3;
+
+                studentList.Add(student);
+                i += 6;
+            }
+
+            // Hiển thị sinh viên đầu tiên
+            if (studentList.Count > 0)
+            {
+                currentPage = 0;
+                DisplayStudent(currentPage);
+            }
+
+            MessageBox.Show("Đã đọc " + studentList.Count + " sinh viên!");
+        }
+
+        // ========== HIỂN THỊ SINH VIÊN BÊN PHẢI ==========
+        private void DisplayStudent(int index)
+        {
+            if (studentList == null || studentList.Count == 0)
+                return;
+
+            if (index < 0 || index >= studentList.Count)
+                return;
+
+            Student student = studentList[index];
+
+            txtName.Text = student.Name;
+            txtID.Text = student.ID.ToString();
+            txtPhone.Text = student.Phone;
+            txtCourse1.Text = student.Course1.ToString();
+            txtCourse2.Text = student.Course2.ToString();
+            txtCourse3.Text = student.Course3.ToString();
+            txtAverage.Text = student.Average.ToString("F2");
+
+            lblPage.Text = (index + 1).ToString();
+        }
+
+        // ========== NÚT BACK ==========
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            if (studentList == null || studentList.Count == 0)
+            {
+                MessageBox.Show("Chưa có dữ liệu!");
+                return;
+            }
+
+            if (currentPage > 0)
+            {
+                currentPage--;
+                DisplayStudent(currentPage);
+            }
+        }
+
+        // ========== NÚT NEXT ==========
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            if (studentList == null || studentList.Count == 0)
+            {
+                MessageBox.Show("Chưa có dữ liệu!");
+                return;
+            }
+
+            if (currentPage < studentList.Count - 1)
+            {
+                currentPage++;
+                DisplayStudent(currentPage);
+            }
+        }
+    }
+}

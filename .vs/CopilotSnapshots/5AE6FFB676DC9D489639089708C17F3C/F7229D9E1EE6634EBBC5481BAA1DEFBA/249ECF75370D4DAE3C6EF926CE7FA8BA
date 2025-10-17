@@ -1,0 +1,112 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+
+namespace Code_NT106.Q14._2_Lab02_24521213
+{
+    public partial class Bai03 : Form
+    {
+        public Bai03()
+        {
+            InitializeComponent();
+        }
+
+        private double EvaluateExpression(string expression)
+        {
+            // Loại bỏ khoảng trắng thừa
+            expression = expression.Trim();
+            
+            // Tách các số và toán tử
+            List<string> tokens = new List<string>();
+            string currentNumber = "";
+            
+            for (int i = 0; i < expression.Length; i++)
+            {
+                if (char.IsDigit(expression[i]) || expression[i] == '.')
+                {
+                    currentNumber += expression[i];
+                }
+                else if (expression[i] == '+' || expression[i] == '-' || expression[i] == '*' || expression[i] == '/')
+                {
+                    if (currentNumber != "")
+                    {
+                        tokens.Add(currentNumber);
+                        currentNumber = "";
+                    }
+                    tokens.Add(expression[i].ToString());
+                }
+                else if (!char.IsWhiteSpace(expression[i]))
+                {
+                    throw new ArgumentException("Biểu thức không hợp lệ");
+                }
+            }
+            
+            if (currentNumber != "")
+                tokens.Add(currentNumber);
+
+            // Tính toán
+            double result = double.Parse(tokens[0]);
+            for (int i = 1; i < tokens.Count; i += 2)
+            {
+                string op = tokens[i];
+                double num = double.Parse(tokens[i + 1]);
+                
+                switch (op)
+                {
+                    case "+":
+                        result += num;
+                        break;
+                    case "-":
+                        result -= num;
+                        break;
+                    case "*":
+                        result *= num;
+                        break;
+                    case "/":
+                        if (num == 0)
+                            throw new DivideByZeroException();
+                        result /= num;
+                        break;
+                }
+            }
+            
+            return result;
+        }
+
+        private void btnRead_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string[] lines = File.ReadAllLines("input3.txt");
+                List<string> outputLines = new List<string>();
+
+                foreach (string line in lines)
+                {
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    
+                    double result = EvaluateExpression(line);
+                    string outputLine = $"{line} = {result}";
+                    outputLines.Add(outputLine);
+                }
+
+                File.WriteAllLines("output3.txt", outputLines);
+                MessageBox.Show("Đã xử lý và ghi kết quả vào file output3.txt thành công!", "Thông báo");
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show("Không tìm thấy file input3.txt!", "Lỗi");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}", "Lỗi");
+            }
+        }
+    }
+}

@@ -1,0 +1,169 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+
+namespace Code_NT106.Q14._2_Lab02_24521213
+{
+    public partial class Bai03 : Form
+    {
+        public Bai03()
+        {
+            InitializeComponent();
+        }
+
+        // Hàm này nhận vào một chuỗi biểu thức (ví dụ: "1 + 2 - 3 * 4")
+        // Ý tưởng: tách thành hai mảng numbers[] và operators[] rồi duyệt từ trái sang phải
+        // Nếu có n số thì sẽ có đúng n-1 toán tử.
+        private double EvaluateExpression(string expression)
+        {
+            // Loại bỏ khoảng trắng ở đầu và cuối
+            expression = expression.Trim();
+
+            // Danh sách lưu số và toán tử
+            List<double> numbers = new List<double>();
+            List<char> operators = new List<char>();
+
+            int i = 0;
+            int len = expression.Length;
+            bool expectNumber = true; // ban đầu mong đợi một số
+
+            while (i < len)
+            {
+                // Bỏ qua khoảng trắng
+                if (char.IsWhiteSpace(expression[i]))
+                {
+                    i++;
+                    continue;
+                }
+
+                if (expectNumber)
+                {
+                    // Xây dựng chuỗi số, có thể có dấu + hoặc - ở trước (hỗ trợ số âm hoặc dấu cộng dấu trống)
+                    StringBuilder sb = new StringBuilder();
+
+                    // Nếu có dấu + hoặc - ở vị trí bắt đầu số thì lấy nó
+                    if (expression[i] == '+' || expression[i] == '-')
+                    {
+                        sb.Append(expression[i]);
+                        i++;
+                    }
+
+                    bool hasDigit = false;
+                    // Lấy các chữ số và dấu chấm thập phân
+                    while (i < len && (char.IsDigit(expression[i]) || expression[i] == '.'))
+                    {
+                        sb.Append(expression[i]);
+                        hasDigit = true;
+                        i++;
+                    }
+
+                    if (!hasDigit)
+                        throw new ArgumentException("Biểu thức không hợp lệ: thiếu số");
+
+                    // Chuyển chuỗi thành double và thêm vào mảng numbers
+                    double num = double.Parse(sb.ToString());
+                    numbers.Add(num);
+
+                    // Lúc này tiếp theo sẽ mong đợi một toán tử (nếu còn ký tự)
+                    expectNumber = false;
+                }
+                else
+                {
+                    // Mong đợi một toán tử: + - * /
+                    char c = expression[i];
+                    if (c == '+' || c == '-' || c == '*' || c == '/')
+                    {
+                        operators.Add(c);
+                        i++;
+                        expectNumber = true; // sau toán tử phải là số
+                    }
+                    else
+                    {
+                        // Nếu không phải toán tử và không phải khoảng trắng -> lỗi
+                        throw new ArgumentException($"Biểu thức không hợp lệ tại ký tự: '{c}'");
+                    }
+                }
+            }
+
+            // Kiểm tra tính hợp lệ: số lượng toán tử phải bằng numbers.Count - 1
+            if (numbers.Count == 0)
+                throw new ArgumentException("Biểu thức rỗng hoặc không hợp lệ");
+            if (operators.Count != numbers.Count - 1)
+                throw new ArgumentException("Biểu thức không hợp lệ: số lượng toán tử không khớp với số lượng số");
+
+            // Thực hiện tính từ trái sang phải theo ý tưởng: result = numbers[0];
+            double result = numbers[0];
+            for (int k = 0; k < operators.Count; k++)
+            {
+                char op = operators[k];
+                double right = numbers[k + 1];
+
+                switch (op)
+                {
+                    case '+':
+                        result = result + right;
+                        break;
+                    case '-':
+                        result = result - right;
+                        break;
+                    case '*':
+                        result = result * right;
+                        break;
+                    case '/':
+                        if (right == 0)
+                            throw new DivideByZeroException();
+                        result = result / right;
+                        break;
+                }
+            }
+
+            return result;
+        }
+
+        // Sự kiện khi người dùng bấm nút Read (đọc file input3.txt và ghi kết quả vào output3.txt)
+        private void btnRead_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Đọc tất cả dòng từ file input3.txt (mỗi dòng là một biểu thức)
+                string[] lines = File.ReadAllLines("input3.txt");
+                List<string> outputLines = new List<string>();
+
+                foreach (string line in lines)
+                {
+                    // Bỏ qua dòng trống
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+
+                    // Tính giá trị biểu thức (hàm EvaluateExpression xử lý)
+                    double result = EvaluateExpression(line);
+
+                    // Tạo chuỗi kết quả theo định dạng: "<biểu thức> = <kết quả>"
+                    // Lưu ý: kết quả ở dạng double, nếu muốn hiển thị theo định dạng khác có thể dùng String.Format hoặc ToString với định dạng.
+                    string outputLine = $"{line} = {result}";
+                    outputLines.Add(outputLine);
+                }
+
+                // Ghi tất cả dòng kết quả vào file output3.txt (ghi đè nếu đã tồn tại)
+                File.WriteAllLines("output3.txt", outputLines);
+                MessageBox.Show("Đã xử lý và ghi kết quả vào file output3.txt thành công!", "Thông báo");
+            }
+            catch (FileNotFoundException)
+            {
+                // Xử lý khi không tìm thấy file input3.txt
+                MessageBox.Show("Không tìm thấy file input3.txt!", "Lỗi");
+            }
+            catch (Exception ex)
+            {
+                // Bắt các lỗi khác (ví dụ: biểu thức không hợp lệ, chia cho 0, lỗi IO...)
+                MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}", "Lỗi");
+            }
+        }
+    }
+}

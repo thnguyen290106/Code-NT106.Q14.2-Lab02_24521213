@@ -1,0 +1,235 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Code_NT106.Q14._2_Lab02_24521213
+{
+    public partial class Bai03 : Form
+    {
+        public Bai03()
+        {
+            InitializeComponent();
+        }
+
+        // Hàm Calculate được viết lại dùng phương pháp phân tích đệ quy (recursive descent)
+        // để xử lý:
+        // - ngoặc đơn trước
+        // - nhân/chia trước cộng/trừ
+        // - hỗ trợ số âm và số thực (có dấu thập phân)
+        private double Calculate(string input)
+        {
+            // Chuẩn hóa chuỗi và tạo parser
+            string s = input.Trim();
+            var parser = new Parser(s);
+            double value = parser.ParseExpression();
+            parser.SkipWhite();
+            if (!parser.IsEnd())
+                throw new ArgumentException("Biểu thức không hợp lệ: còn ký tự lạ");
+            return value;
+        }
+
+        // Lớp Parser nhỏ gọn để phân tích biểu thức
+        private class Parser
+        {
+            private readonly string s;
+            private int pos;
+
+            public Parser(string s)
+            {
+                this.s = s;
+                this.pos = 0;
+            }
+
+            // Bỏ qua khoảng trắng
+            public void SkipWhite()
+            {
+                while (pos < s.Length && char.IsWhiteSpace(s[pos])) pos++;
+            }
+
+            public bool IsEnd()
+            {
+                SkipWhite();
+                return pos >= s.Length;
+            }
+
+            // Peek ký tự hiện tại (chưa bỏ trắng)
+            private char Peek()
+            {
+                SkipWhite();
+                if (pos < s.Length) return s[pos];
+                return '\0';
+            }
+
+            // Lấy và tiến 1 ký tự
+            private char Next()
+            {
+                SkipWhite();
+                if (pos < s.Length) return s[pos++];
+                return '\0';
+            }
+
+            // ParseExpression: xử lý cộng/trừ với Term
+            public double ParseExpression()
+            {
+                double left = ParseTerm();
+                while (true)
+                {
+                    SkipWhite();
+                    if (pos >= s.Length) break;
+                    char op = s[pos];
+                    if (op == '+' || op == '-')
+                    {
+                        pos++; // tiêu thụ toán tử
+                        double right = ParseTerm();
+                        if (op == '+') left = left + right;
+                        else left = left - right;
+                    }
+                    else break;
+                }
+                return left;
+            }
+
+            // ParseTerm: xử lý nhân/chia với Factor
+            private double ParseTerm()
+            {
+                double left = ParseFactor();
+                while (true)
+                {
+                    SkipWhite();
+                    if (pos >= s.Length) break;
+                    char op = s[pos];
+                    if (op == '*' || op == '/')
+                    {
+                        pos++; // tiêu thụ toán tử
+                        double right = ParseFactor();
+                        if (op == '*') left = left * right;
+                        else
+                        {
+                            if (right == 0) throw new DivideByZeroException("Chia cho 0");
+                            left = left / right;
+                        }
+                    }
+                    else break;
+                }
+                return left;
+            }
+
+            // ParseFactor: số, ngoặc hoặc unary +/ -
+            private double ParseFactor()
+            {
+                SkipWhite();
+                if (pos >= s.Length)
+                    throw new ArgumentException("Biểu thức không hợp lệ: thiếu toán hạng");
+
+                char c = s[pos];
+                // Unary + or -
+                if (c == '+' || c == '-')
+                {
+                    pos++;
+                    double v = ParseFactor();
+                    return (c == '-') ? -v : v;
+                }
+
+                // Parentheses
+                if (c == '(')
+                {
+                    pos++; // skip '('
+                    double inside = ParseExpression();
+                    SkipWhite();
+                    if (pos >= s.Length || s[pos] != ')')
+                        throw new ArgumentException("Thiếu dấu ')' trong biểu thức");
+                    pos++; // skip ')'
+                    return inside;
+                }
+
+                // Number
+                return ParseNumber();
+            }
+
+            // Parse một số thực (hỗ trợ dấu thập phân)
+            private double ParseNumber()
+            {
+                SkipWhite();
+                int start = pos;
+                bool hasDigit = false;
+                // lấy phần số
+                while (pos < s.Length && char.IsDigit(s[pos]))
+                {
+                    pos++; hasDigit = true;
+                }
+                // phần thập phân
+                if (pos < s.Length && s[pos] == '.')
+                {
+                    pos++;
+                    while (pos < s.Length && char.IsDigit(s[pos]))
+                    {
+                        pos++; hasDigit = true;
+                    }
+                }
+                if (!hasDigit)
+                    throw new ArgumentException($"Biểu thức không hợp lệ tại vị trí {start}");
+
+                string numStr = s.Substring(start, pos - start);
+                // Parse dùng CultureInfo.InvariantCulture để đảm bảo dùng dấu '.'
+                if (!double.TryParse(numStr, NumberStyles.Number, CultureInfo.InvariantCulture, out double val))
+                    throw new ArgumentException($"Không thể phân tích số: {numStr}");
+                return val;
+            }
+        }
+
+        // Sự kiện khi người dùng nhấn nút Read: đọc file input3.txt, tính từng dòng, ghi file output3.txt
+        private void btnRead_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Đọc tất cả các dòng từ file input3.txt
+                string[] lines = File.ReadAllLines("input3.txt");
+
+                List<string> outputLines = new List<string>();
+                // Reset hiển thị trên form (nếu có textbox txtShow)
+                try { txtShow.Clear(); } catch { }
+
+                foreach (string rawLine in lines)
+                {
+                    string line = rawLine.Trim();
+                    if (string.IsNullOrWhiteSpace(line)) continue; // bỏ qua dòng rỗng
+
+                    try
+                    {
+                        double result = Calculate(line);
+                        string outLine = line + " = " + result.ToString(CultureInfo.InvariantCulture);
+                        outputLines.Add(outLine);
+                        try { txtShow.AppendText(outLine + Environment.NewLine); } catch { }
+                    }
+                    catch (Exception exLine)
+                    {
+                        string outLine = line + " = Error: " + exLine.Message;
+                        outputLines.Add(outLine);
+                        try { txtShow.AppendText(outLine + Environment.NewLine); } catch { }
+                    }
+                }
+
+                // Ghi tất cả kết quả vào file output3.txt (ghi đè)
+                File.WriteAllLines("output3.txt", outputLines);
+
+                MessageBox.Show("Đã xử lý và ghi kết quả vào file output3.txt", "Thông báo");
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show("Không tìm thấy file input3.txt", "Lỗi");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Đã xảy ra lỗi: " + ex.Message, "Lỗi");
+            }
+        }
+    }
+}

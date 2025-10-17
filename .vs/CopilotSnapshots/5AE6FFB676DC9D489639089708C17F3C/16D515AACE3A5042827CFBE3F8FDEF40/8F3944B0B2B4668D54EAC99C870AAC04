@@ -1,0 +1,209 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Code_NT106.Q14._2_Lab02_24521213
+{
+    public partial class Bai03 : Form
+    {
+        public Bai03()
+        {
+            InitializeComponent();
+        }
+
+        // Hàm Calculate sử dụng 2 stack để xử lý:
+        // - ngoặc đơn trước
+        // - nhân/chia trước cộng/trừ
+        // Ý tưởng: khi gặp số -> đẩy vào stack giá trị (values)
+        // khi gặp toán tử -> kiểm tra ưu tiên với toán tử trên stack ops và áp dụng trước nếu cần
+        private double Calculate(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+                throw new ArgumentException("Biểu thức rỗng");
+
+            s = s.Trim();
+            Stack<double> values = new Stack<double>();
+            Stack<char> ops = new Stack<char>();
+
+            int i = 0;
+            int n = s.Length;
+
+            while (i < n)
+            {
+                char c = s[i];
+
+                // Bỏ qua khoảng trắng
+                if (char.IsWhiteSpace(c))
+                {
+                    i++; continue;
+                }
+
+                // Nếu gặp dấu '(' -> đẩy vào stack ops
+                if (c == '(')
+                {
+                    ops.Push(c);
+                    i++;
+                }
+                // Nếu gặp số hoặc dấu + / - là unary (ví dụ -5 hoặc +3) -> đọc số
+                else if (char.IsDigit(c) || c == '.' || IsUnarySign(s, i))
+                {
+                    int start = i;
+
+                    // Nếu là dấu + hoặc - nhưng là unary thì bao gồm vào số
+                    if ((s[i] == '+' || s[i] == '-') && IsUnarySign(s, i)) i++;
+
+                    // lấy phần số (các chữ số và dấu chấm)
+                    while (i < n && (char.IsDigit(s[i]) || s[i] == '.')) i++;
+
+                    string numStr = s.Substring(start, i - start);
+                    if (!double.TryParse(numStr, NumberStyles.Number, CultureInfo.InvariantCulture, out double num))
+                        throw new ArgumentException($"Không thể phân tích số: {numStr}");
+
+                    values.Push(num);
+                }
+                // Nếu gặp dấu ')' -> áp dụng toán đến khi gặp '('
+                else if (c == ')')
+                {
+                    while (ops.Count > 0 && ops.Peek() != '(')
+                    {
+                        ApplyOp(values, ops);
+                    }
+                    if (ops.Count == 0 || ops.Peek() != '(')
+                        throw new ArgumentException("Thiếu dấu '(' tương ứng");
+                    ops.Pop(); // bỏ '('
+                    i++;
+                }
+                // Nếu là toán tử + - * /
+                else if (IsOperator(c))
+                {
+                    // Khi stack ops không rỗng và toán tử trên đỉnh có độ ưu tiên >= toán tử hiện tại
+                    // thì áp dụng toán đó trước (giữ tính chất left-associative)
+                    while (ops.Count > 0 && ops.Peek() != '(' && Precedence(ops.Peek()) >= Precedence(c))
+                    {
+                        ApplyOp(values, ops);
+                    }
+                    ops.Push(c);
+                    i++;
+                }
+                else
+                {
+                    throw new ArgumentException($"Ký tự không hợp lệ trong biểu thức: '{c}'");
+                }
+            }
+
+            // Áp dụng các toán tử còn lại
+            while (ops.Count > 0)
+            {
+                if (ops.Peek() == '(' || ops.Peek() == ')')
+                    throw new ArgumentException("Ngoặc không khớp");
+                ApplyOp(values, ops);
+            }
+
+            if (values.Count != 1)
+                throw new ArgumentException("Biểu thức không hợp lệ");
+
+            return values.Pop();
+        }
+
+        // Kiểm tra một ký tự có phải toán tử không
+        private bool IsOperator(char c)
+        {
+            return c == '+' || c == '-' || c == '*' || c == '/';
+        }
+
+        // Độ ưu tiên: * và / = 2, + và - = 1
+        private int Precedence(char op)
+        {
+            return (op == '*' || op == '/') ? 2 : 1;
+        }
+
+        // Áp dụng toán tử trên đỉnh stack ops lên hai giá trị trên đỉnh stack values
+        private void ApplyOp(Stack<double> values, Stack<char> ops)
+        {
+            if (values.Count < 2) throw new ArgumentException("Biểu thức không hợp lệ: thiếu toán hạng");
+            double b = values.Pop();
+            double a = values.Pop();
+            char op = ops.Pop();
+
+            double res;
+            switch (op)
+            {
+                case '+': res = a + b; break;
+                case '-': res = a - b; break;
+                case '*': res = a * b; break;
+                case '/':
+                    if (b == 0) throw new DivideByZeroException("Chia cho 0");
+                    res = a / b; break;
+                default: throw new ArgumentException($"Toán tử không hỗ trợ: {op}");
+            }
+            values.Push(res);
+        }
+
+        // Kiểm tra dấu + hoặc - ở vị trí i có phải là dấu unary (phần của số) hay không
+        // Unary nếu ở đầu chuỗi, hoặc sau một '(' hoặc sau một toán tử khác
+        private bool IsUnarySign(string s, int i)
+        {
+            if (i < 0 || i >= s.Length) return false;
+            if (s[i] != '+' && s[i] != '-') return false;
+
+            // tìm ký tự trước đó không phải khoảng trắng
+            int j = i - 1;
+            while (j >= 0 && char.IsWhiteSpace(s[j])) j--;
+            if (j < 0) return true; // ở đầu
+            char prev = s[j];
+            if (prev == '(' || IsOperator(prev)) return true;
+            return false;
+        }
+
+        // Sự kiện khi người dùng nhấn nút Read: đọc file input3.txt, tính từng dòng, ghi file output3.txt
+        private void btnRead_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string[] lines = File.ReadAllLines("input3.txt");
+                List<string> outputLines = new List<string>();
+                try { txtShow.Clear(); } catch { }
+
+                foreach (string rawLine in lines)
+                {
+                    string line = rawLine.Trim();
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+
+                    try
+                    {
+                        double res = Calculate(line);
+                        string outLine = line + " = " + res.ToString(CultureInfo.InvariantCulture);
+                        outputLines.Add(outLine);
+                        try { txtShow.AppendText(outLine + Environment.NewLine); } catch { }
+                    }
+                    catch (Exception exLine)
+                    {
+                        string outLine = line + " = Error: " + exLine.Message;
+                        outputLines.Add(outLine);
+                        try { txtShow.AppendText(outLine + Environment.NewLine); } catch { }
+                    }
+                }
+
+                // Ghi ra file 1 lần
+                File.WriteAllLines("output3.txt", outputLines);
+                MessageBox.Show("Đã xử lý và ghi kết quả vào file output3.txt", "Thông báo");
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show("Không tìm thấy file input3.txt", "Lỗi");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Đã xảy ra lỗi: " + ex.Message, "Lỗi");
+            }
+        }
+    }
+}

@@ -16,7 +16,6 @@ namespace Code_NT106.Q14._2_Lab02_24521213
         {
             InitializeComponent();
         }
-
         private void btnReadFile_Click(object sender, EventArgs e)
         {
             if (!File.Exists("input1.txt"))
@@ -24,14 +23,13 @@ namespace Code_NT106.Q14._2_Lab02_24521213
                 MessageBox.Show("Chưa tạo file input1.txt");
                 return;
             }
+            StreamReader read = new StreamReader("input1.txt");
             FileInfo file = new FileInfo("input1.txt");
             if (file.Length == 0) {
                 MessageBox.Show("File input1.txt rỗng");
                 return;
             }
-            StreamReader read = new StreamReader("input1.txt");
-            string content = read.ReadToEnd();
-            txtContentOfFile.Text = content;
+            txtContentOfFile.Text += read.ReadToEnd() + "\r\n\r\n";
             read.Close();
             MessageBox.Show("Đọc file thành công");
         }
@@ -45,6 +43,7 @@ namespace Code_NT106.Q14._2_Lab02_24521213
             }
             StreamWriter write = new StreamWriter("output1.txt");
             write.Write(txtContentOfFile.Text.ToUpper());
+            txtContentOfFile.Text += "File output1.txt: \r\n" + txtContentOfFile.Text.ToUpper();
             write.Close();
             MessageBox.Show("Đã lưu nội dung dưới dạng in hoa vào file output1.txt");
         }

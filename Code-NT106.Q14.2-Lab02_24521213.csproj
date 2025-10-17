@@ -9,4 +9,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Bai02.Tests\**" />
+    <EmbeddedResource Remove="Bai02.Tests\**" />
+    <None Remove="Bai02.Tests\**" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,65 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Formats.Asn1;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Code_NT106.Q14._2_Lab02_24521213
+{
+    public partial class Bai03 : Form
+    {
+        public Bai03()
+        {
+            InitializeComponent();
+        }
+
+        private double Calculate(string s)
+        {
+            s = s.Trim();
+            List<double> numbers = new List<double>();
+            List<char> operators = new List<char>();
+            string StringNumber = "";
+            if (s[0] == '-' || s[0] == '+') StringNumber += s[0];
+            for (int i = 0; i < s.Length; ++i)
+            {
+                if (s[i] >= '0' && s[i] <= '9' || s[i] == '.') StringNumber += s[i];
+                if (s[i] == '+' || s[i] == '-' || s[i] == '*' || s[i] == '/')
+                {
+                    numbers.Add(double.Parse(StringNumber));
+                    StringNumber = "";
+                    operators.Add(s[i]);
+                }
+            }
+            numbers.Add(double.Parse(StringNumber));
+            double result = 1.0 * numbers[0];
+            for (int i = 0; i < operators.Count; ++i)
+            {
+                if (operators[i] == '+') result += numbers[i + 1];
+                else if (operators[i] == '-') result -= numbers[i + 1];
+                else if (operators[i] == '*') result *= numbers[i + 1];
+                else result /= numbers[i + 1];
+            }
+            return result;
+        }
+
+        private void btnRead_Click(object sender, EventArgs e)
+        {
+            string[] lines = File.ReadAllLines("input3.txt");
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                double res = Calculate(lines[i]);
+                StreamWriter write = new StreamWriter("output3.txt");
+                txtShow.Text += lines[i] + " = " + res.ToString() + "\r\n";
+                write.Write(txtShow.Text);
+                write.Close();
+                MessageBox.Show("Đã ghi kết quả vào file output3.txt");
+            }
+        }
+    }
+}

@@ -1,0 +1,108 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Formats.Asn1;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Code_NT106.Q14._2_Lab02_24521213
+{
+    public partial class Bai03 : Form
+    {
+        public Bai03()
+        {
+            InitializeComponent();
+        }
+        private int Prioty(char op)
+        {
+            if (op == '*' || op == '/') return 2;
+            if (op == '+' || op == '-') return 1;
+            return 0;
+        }
+        private decimal Operation(char operators, decimal b, decimal a)
+        {
+            if (operators == '+') return a + b;
+            else if (operators == '-') return a - b;
+            else if (operators == '*') return a * b;
+            else return a / b;
+        }
+        private decimal Calculate(string s)
+        {
+            s = s.Trim();
+            Stack<decimal> numbers = new Stack<decimal>();
+            Stack<char> operators = new Stack<char>();
+            string StringNumber = "";
+            for (int i = 0; i < s.Length; ++i)
+            {
+                if (s[i] == ' ') continue;
+                if ((s[i] >= '0' && s[i] <= '9') || s[i] == '.') StringNumber += s[i];
+                else if ((s[i] == '-' || s[i] == '+') && (i == 0 || s[i - 1] == '(')) StringNumber += s[i];
+                else if (s[i] == '(') operators.Push(s[i]);
+                else if (s[i] == ')')
+                {
+                    if (StringNumber != "")
+                    {
+                        numbers.Push(decimal.Parse(StringNumber));
+                        StringNumber = "";
+                    }
+                    while (operators.Count > 0 && operators.Peek() != '(')
+                    {
+                        decimal b = numbers.Pop();
+                        decimal a = numbers.Pop();
+                        char op = operators.Pop();
+                        numbers.Push(Operation(op, b, a));
+                    }
+                    operators.Pop();
+                }
+                else if (s[i] == '+' || s[i] == '-' || s[i] == '*' || s[i] == '/')
+                {
+                    if (StringNumber != "")
+                    {
+                        numbers.Push(decimal.Parse(StringNumber));
+                        StringNumber = "";
+                    }
+                    while (operators.Count > 0 && operators.Peek() != '(' && Prioty(operators.Peek()) >= Prioty(s[i]))
+                    {
+                        decimal b = numbers.Pop();
+                        decimal a = numbers.Pop();
+                        char op = operators.Pop();
+                        numbers.Push(Operation(op, b, a));
+                    }
+                    operators.Push(s[i]);
+                }
+            }
+            if (StringNumber != "")
+            {
+                numbers.Push(decimal.Parse(StringNumber));
+            }
+            while (operators.Count > 0)
+            {
+                decimal b = numbers.Pop();
+                decimal a = numbers.Pop();
+                char op = operators.Pop();
+                numbers.Push(Operation(op, b, a));
+            }
+            decimal result = numbers.Pop();
+            return result;
+        }
+
+        private void btnRead_Click(object sender, EventArgs e)
+        {
+            string[] lines = File.ReadAllLines("input3.txt");
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                decimal res = Calculate(lines[i]);
+                txtShow.Text += lines[i] + " = " + res.ToString() + "\r\n";
+            }
+            StreamWriter write = new StreamWriter("output3.txt");
+            write.Write(txtShow.Text);
+            write.Close();
+            MessageBox.Show("Đã ghi kết quả vào file output3.txt");
+        }
+    }
+}

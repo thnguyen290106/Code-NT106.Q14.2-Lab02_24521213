@@ -1,0 +1,224 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Formats.Asn1;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Code_NT106.Q14._2_Lab02_24521213
+{
+    public partial class Bai03 : Form
+    {
+        public Bai03()
+        {
+            InitializeComponent();
+        }
+        private int Prioty(char op)
+        {
+            if (op == '*' || op == '/') return 2;
+            if (op == '+' || op == '-') return 1;
+            return 0;
+        }
+        private decimal Operation(char operators, decimal b, decimal a)
+        {
+            try
+            {
+                if (operators == '+') return a + b;
+                else if (operators == '-') return a - b;
+                else if (operators == '*') return a * b;
+                else if (operators == '/')
+                {
+                    if (b == 0)
+                        throw new DivideByZeroException();
+                    return a / b;
+                }
+                throw new ArgumentException("Toán tử không hợp lệ");
+            }
+            catch (OverflowException)
+            {
+                throw new OverflowException("Kết quả tính toán vượt quá giới hạn cho phép");
+            }
+        }
+
+        private decimal Calculate(string s)
+        {
+            try
+            {
+                s = s.Trim();
+                Stack<decimal> numbers = new Stack<decimal>();
+                Stack<char> operators = new Stack<char>();
+                string StringNumber = "";
+                bool expectNumber = true; // Kiểm tra cú pháp
+
+                for (int i = 0; i < s.Length; ++i)
+                {
+                    if (s[i] == ' ') continue;
+                    
+                    // Xử lý số
+                    if ((s[i] >= '0' && s[i] <= '9') || s[i] == '.')
+                    {
+                        StringNumber += s[i];
+                        expectNumber = false;
+                    }
+                    // Xử lý dấu âm/dương đầu số
+                    else if ((s[i] == '-' || s[i] == '+') && (i == 0 || s[i - 1] == '('))
+                    {
+                        StringNumber += s[i];
+                        expectNumber = false;
+                    }
+                    // Xử lý dấu ngoặc mở
+                    else if (s[i] == '(')
+                    {
+                        if (!expectNumber && StringNumber == "")
+                            throw new ArgumentException("Biểu thức không hợp lệ");
+                        operators.Push(s[i]);
+                        expectNumber = true;
+                    }
+                    // Xử lý dấu ngoặc đóng
+                    else if (s[i] == ')')
+                    {
+                        if (expectNumber)
+                            throw new ArgumentException("Biểu thức không hợp lệ");
+                            
+                        if (StringNumber != "")
+                        {
+                            numbers.Push(decimal.Parse(StringNumber));
+                            StringNumber = "";
+                        }
+                        
+                        bool foundMatching = false;
+                        while (operators.Count > 0)
+                        {
+                            char op = operators.Peek();
+                            if (op == '(')
+                            {
+                                foundMatching = true;
+                                operators.Pop();
+                                break;
+                            }
+                            
+                            if (numbers.Count < 2)
+                                throw new ArgumentException("Biểu thức không hợp lệ");
+                                
+                            decimal b = numbers.Pop();
+                            decimal a = numbers.Pop();
+                            operators.Pop();
+                            numbers.Push(Operation(op, b, a));
+                        }
+                        
+                        if (!foundMatching)
+                            throw new ArgumentException("Dấu ngoặc không khớp");
+                            
+                        expectNumber = false;
+                    }
+                    // Xử lý các toán tử
+                    else if (s[i] == '+' || s[i] == '-' || s[i] == '*' || s[i] == '/')
+                    {
+                        if (expectNumber)
+                            throw new ArgumentException("Biểu thức không hợp lệ");
+                            
+                        if (StringNumber != "")
+                        {
+                            numbers.Push(decimal.Parse(StringNumber));
+                            StringNumber = "";
+                        }
+                        
+                        while (operators.Count > 0 && operators.Peek() != '(' && Prioty(operators.Peek()) >= Prioty(s[i]))
+                        {
+                            if (numbers.Count < 2)
+                                throw new ArgumentException("Biểu thức không hợp lệ");
+                                
+                            decimal b = numbers.Pop();
+                            decimal a = numbers.Pop();
+                            char op = operators.Pop();
+                            numbers.Push(Operation(op, b, a));
+                        }
+                        operators.Push(s[i]);
+                        expectNumber = true;
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Ký tự không hợp lệ");
+                    }
+                }
+
+                if (StringNumber != "")
+                {
+                    numbers.Push(decimal.Parse(StringNumber));
+                }
+
+                while (operators.Count > 0)
+                {
+                    if (operators.Peek() == '(')
+                        throw new ArgumentException("Dấu ngoặc không khớp");
+                        
+                    if (numbers.Count < 2)
+                        throw new ArgumentException("Biểu thức không hợp lệ");
+                        
+                    decimal b = numbers.Pop();
+                    decimal a = numbers.Pop();
+                    char op = operators.Pop();
+                    numbers.Push(Operation(op, b, a));
+                }
+
+                if (numbers.Count != 1)
+                    throw new ArgumentException("Biểu thức không hợp lệ");
+                    
+                return numbers.Pop();
+            }
+            catch (DivideByZeroException)
+            {
+                throw new DivideByZeroException("Không thể chia cho 0");
+            }
+            catch (FormatException)
+            {
+                throw new ArgumentException("Biểu thức không hợp lệ");
+            }
+        }
+
+        private void btnRead_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string[] lines = File.ReadAllLines("input3.txt");
+                StringBuilder output = new StringBuilder();
+                
+                for (int i = 0; i < lines.Length; ++i)
+                {
+                    try
+                    {
+                        if (string.IsNullOrWhiteSpace(lines[i])) continue;
+                        
+                        decimal res = Calculate(lines[i]);
+                        output.AppendLine(lines[i] + " = " + res.ToString());
+                    }
+                    catch (DivideByZeroException ex)
+                    {
+                        output.AppendLine(lines[i] + " => Lỗi: " + ex.Message);
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        output.AppendLine(lines[i] + " => Lỗi: " + ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        output.AppendLine(lines[i] + " => Lỗi không xác định: " + ex.Message);
+                    }
+                }
+                
+                txtShow.Text = output.ToString();
+                File.WriteAllText("output3.txt", output.ToString());
+                MessageBox.Show("Đã ghi kết quả vào file output3.txt");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi đọc/ghi file: " + ex.Message);
+            }
+        }
+    }
+}

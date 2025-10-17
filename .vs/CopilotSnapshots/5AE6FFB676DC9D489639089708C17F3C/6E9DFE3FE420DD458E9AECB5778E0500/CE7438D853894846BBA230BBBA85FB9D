@@ -1,0 +1,145 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Formats.Asn1;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+
+namespace Code_NT106.Q14._2_Lab02_24521213
+{
+    public partial class Bai03 : Form
+    {
+        public Bai03()
+        {
+            InitializeComponent();
+        }
+
+        // Hàm Calculate: tách chuỗi biểu thức thành hai mảng numbers[] và operators[]
+        // Sau đó thực hiện tính toán từ trái sang phải.
+        // Lưu ý: hàm không xử lý ngoặc hoặc thứ tự ưu tiên (*, / trước +, -).
+        private double Calculate(string s)
+        {
+            s = s.Trim();
+            List<double> numbers = new List<double>();
+            List<char> operators = new List<char>();
+            string StringNumber = "";
+
+            // Nếu ký tự đầu là dấu + hoặc - thì đó là phần của số đầu tiên (ví dụ: -5 + 3)
+            if (s.Length > 0 && (s[0] == '-' || s[0] == '+'))
+                StringNumber += s[0];
+
+            for (int i = 0; i < s.Length; ++i)
+            {
+                // Nếu là chữ số hoặc dấu chấm thì nối vào chuỗi số hiện tại
+                if ((s[i] >= '0' && s[i] <= '9') || s[i] == '.')
+                {
+                    StringNumber += s[i];
+                }
+
+                // Nếu gặp toán tử thì hoàn thành số hiện tại và lưu toán tử
+                if (s[i] == '+' || s[i] == '-' || s[i] == '*' || s[i] == '/')
+                {
+                    // Chuyển StringNumber thành số và thêm vào danh sách numbers
+                    if (StringNumber == "")
+                        throw new ArgumentException("Biểu thức không hợp lệ: thiếu số trước toán tử");
+
+                    numbers.Add(double.Parse(StringNumber));
+                    StringNumber = "";
+                    operators.Add(s[i]);
+                }
+            }
+
+            // Sau vòng for cần thêm số cuối cùng (nếu có)
+            if (!string.IsNullOrEmpty(StringNumber))
+            {
+                numbers.Add(double.Parse(StringNumber));
+            }
+
+            // Kiểm tra hợp lệ: số lượng toán tử phải bằng numbers.Count - 1
+            if (numbers.Count == 0)
+                throw new ArgumentException("Biểu thức rỗng hoặc không hợp lệ");
+            if (operators.Count != numbers.Count - 1)
+                throw new ArgumentException("Biểu thức không hợp lệ: số lượng toán tử không khớp");
+
+            // Thực hiện tính toán từ trái sang phải
+            double result = numbers[0];
+            for (int i = 0; i < operators.Count; ++i)
+            {
+                double right = numbers[i + 1];
+                char op = operators[i];
+
+                if (op == '+') result = result + right;
+                else if (op == '-') result = result - right;
+                else if (op == '*') result = result * right;
+                else if (op == '/')
+                {
+                    if (right == 0)
+                        throw new DivideByZeroException("Chia cho 0");
+                    result = result / right;
+                }
+            }
+
+            return result;
+        }
+
+        // Sự kiện khi người dùng nhấn nút Read: đọc file input3.txt, tính từng dòng, ghi file output3.txt
+        private void btnRead_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Đọc tất cả các dòng từ file input3.txt
+                // Mỗi dòng trong file được coi là một biểu thức riêng
+                string[] lines = File.ReadAllLines("input3.txt");
+
+                List<string> outputLines = new List<string>();
+
+                foreach (string rawLine in lines)
+                {
+                    // Giữ nguyên nội dung dòng ban đầu khi in ra file kết quả, nhưng xóa khoảng trắng đầu/cuối khi tính
+                    string line = rawLine.Trim();
+
+                    // Bỏ qua dòng rỗng
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    try
+                    {
+                        // Tính kết quả bằng hàm Calculate
+                        double result = Calculate(line);
+
+                        // Tạo chuỗi kết quả: "<biểu thức> = <kết quả>"
+                        // Với người mới học, ta dùng ToString() mặc định để hiển thị double
+                        string outLine = line + " = " + result.ToString();
+                        outputLines.Add(outLine);
+                    }
+                    catch (Exception exLine)
+                    {
+                        // Nếu có lỗi khi tính toán biểu thức ở dòng này, ghi thông báo lỗi thay vì dừng toàn bộ chương trình
+                        outputLines.Add(line + " = Error: " + exLine.Message);
+                    }
+                }
+
+                // Ghi tất cả dòng kết quả vào file output3.txt (ghi đè nếu đã tồn tại)
+                File.WriteAllLines("output3.txt", outputLines);
+
+                // Thông báo cho người dùng biết đã hoàn tất
+                MessageBox.Show("Đã xử lý xong và ghi kết quả vào file output3.txt", "Thông báo");
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show("Không tìm thấy file input3.txt", "Lỗi");
+            }
+            catch (Exception ex)
+            {
+                // Bắt mọi lỗi khác (ví dụ lỗi đọc/ghi file)
+                MessageBox.Show("Đã xảy ra lỗi: " + ex.Message, "Lỗi");
+            }
+        }
+    }
+}
