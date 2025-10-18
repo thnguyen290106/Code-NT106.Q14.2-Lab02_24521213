@@ -15,4 +15,8 @@
     <None Remove="Bai02.Tests\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Stub.System.Data.SQLite.Core.NetFramework" Version="1.0.119" />
+  </ItemGroup>
+
 </Project>

@@ -36,3 +36,6 @@ D:\NT106.Q14.2_24521213\Code-NT106.Q14.2-Lab02_24521213\obj\Debug\net8.0-windows
 D:\NT106.Q14.2_24521213\Code-NT106.Q14.2-Lab02_24521213\obj\Debug\net8.0-windows\Code_NT106.Q14._2_Lab02_24521213.Bai03.resources
 D:\NT106.Q14.2_24521213\Code-NT106.Q14.2-Lab02_24521213\obj\Debug\net8.0-windows\Code_NT106.Q14._2_Lab02_24521213.Bai04.resources
 D:\NT106.Q14.2_24521213\Code-NT106.Q14.2-Lab02_24521213\obj\Debug\net8.0-windows\Code_NT106.Q14._2_Lab02_24521213.Bai05.resources
+D:\NT106.Q14.2_24521213\Code-NT106.Q14.2-Lab02_24521213\bin\Debug\net8.0-windows\System.Data.SQLite.dll
+D:\NT106.Q14.2_24521213\Code-NT106.Q14.2-Lab02_24521213\obj\Debug\net8.0-windows\Code-NT106.Q14.2-Lab02_24521213.csproj.AssemblyReference.cache
+D:\NT106.Q14.2_24521213\Code-NT106.Q14.2-Lab02_24521213\obj\Debug\net8.0-windows\Code-NT1.7E6D5D21.Up2Date
