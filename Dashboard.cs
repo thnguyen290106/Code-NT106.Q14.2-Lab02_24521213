@@ -44,7 +44,9 @@ namespace Code_NT106.Q14._2_Lab02_24521213
 
         private void btnBai6_Click(object sender, EventArgs e)
         {
-
+            this.Hide();
+            new Bai06().ShowDialog();
+            this.Show();
         }
 
         private void btnBai7_Click(object sender, EventArgs e)
