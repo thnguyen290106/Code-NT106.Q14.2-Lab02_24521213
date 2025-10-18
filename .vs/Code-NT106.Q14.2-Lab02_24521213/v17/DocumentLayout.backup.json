@@ -3,12 +3,20 @@
   "WorkspaceRootPath": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CBC20174-25EC-4BAF-B398-A42E3C3A91AD}|Code-NT106.Q14.2-Lab02_24521213.csproj|d:\\nt106.q14.2_24521213\\code-nt106.q14.2-lab02_24521213\\bai06.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{CBC20174-25EC-4BAF-B398-A42E3C3A91AD}|Code-NT106.Q14.2-Lab02_24521213.csproj|solutionrelative:bai06.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{CBC20174-25EC-4BAF-B398-A42E3C3A91AD}|Code-NT106.Q14.2-Lab02_24521213.csproj|d:\\nt106.q14.2_24521213\\code-nt106.q14.2-lab02_24521213\\bai07.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBC20174-25EC-4BAF-B398-A42E3C3A91AD}|Code-NT106.Q14.2-Lab02_24521213.csproj|solutionrelative:bai07.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CBC20174-25EC-4BAF-B398-A42E3C3A91AD}|Code-NT106.Q14.2-Lab02_24521213.csproj|d:\\nt106.q14.2_24521213\\code-nt106.q14.2-lab02_24521213\\bai06.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBC20174-25EC-4BAF-B398-A42E3C3A91AD}|Code-NT106.Q14.2-Lab02_24521213.csproj|solutionrelative:bai06.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{CBC20174-25EC-4BAF-B398-A42E3C3A91AD}|Code-NT106.Q14.2-Lab02_24521213.csproj|d:\\nt106.q14.2_24521213\\code-nt106.q14.2-lab02_24521213\\bai07.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{CBC20174-25EC-4BAF-B398-A42E3C3A91AD}|Code-NT106.Q14.2-Lab02_24521213.csproj|solutionrelative:bai07.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBC20174-25EC-4BAF-B398-A42E3C3A91AD}|Code-NT106.Q14.2-Lab02_24521213.csproj|d:\\nt106.q14.2_24521213\\code-nt106.q14.2-lab02_24521213\\bai07.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBC20174-25EC-4BAF-B398-A42E3C3A91AD}|Code-NT106.Q14.2-Lab02_24521213.csproj|solutionrelative:bai07.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBC20174-25EC-4BAF-B398-A42E3C3A91AD}|Code-NT106.Q14.2-Lab02_24521213.csproj|d:\\nt106.q14.2_24521213\\code-nt106.q14.2-lab02_24521213\\dashboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBC20174-25EC-4BAF-B398-A42E3C3A91AD}|Code-NT106.Q14.2-Lab02_24521213.csproj|solutionrelative:dashboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,8 +26,22 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 5,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Dashboard.cs",
+              "DocumentMoniker": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Dashboard.cs",
+              "RelativeDocumentMoniker": "Dashboard.cs",
+              "ToolTip": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Dashboard.cs",
+              "RelativeToolTip": "Dashboard.cs",
+              "ViewState": "AgIAACgAAAAAAAAAAAAqwDcAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-18T09:49:00.709Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
@@ -30,27 +52,40 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Bai06.cs [Design]",
-              "DocumentMoniker": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Bai06.cs",
-              "RelativeDocumentMoniker": "Bai06.cs",
-              "ToolTip": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Bai06.cs [Design]",
-              "RelativeToolTip": "Bai06.cs [Design]",
+              "DocumentIndex": 1,
+              "Title": "Bai07.cs [Design]",
+              "DocumentMoniker": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Bai07.cs",
+              "RelativeDocumentMoniker": "Bai07.cs",
+              "ToolTip": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Bai07.cs [Design]",
+              "RelativeToolTip": "Bai07.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-18T09:11:27.982Z",
+              "WhenOpened": "2025-10-18T09:48:43.783Z",
               "EditorCaption": " [Design]"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Bai06.cs",
-              "DocumentMoniker": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Bai06.cs",
-              "RelativeDocumentMoniker": "Bai06.cs",
-              "ToolTip": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Bai06.cs",
-              "RelativeToolTip": "Bai06.cs",
-              "ViewState": "AgIAAE8BAAAAAAAAAAAAAFUAAABKAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "Bai07.cs",
+              "DocumentMoniker": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Bai07.cs",
+              "RelativeDocumentMoniker": "Bai07.cs",
+              "ToolTip": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Bai07.cs",
+              "RelativeToolTip": "Bai07.cs",
+              "ViewState": "AgIAAG0AAAAAAAAAAAAwwHoAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-18T08:37:18.512Z",
+              "WhenOpened": "2025-10-18T09:48:39.17Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Bai07.Designer.cs",
+              "DocumentMoniker": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Bai07.Designer.cs",
+              "RelativeDocumentMoniker": "Bai07.Designer.cs",
+              "ToolTip": "D:\\NT106.Q14.2_24521213\\Code-NT106.Q14.2-Lab02_24521213\\Bai07.Designer.cs",
+              "RelativeToolTip": "Bai07.Designer.cs",
+              "ViewState": "AgIAACYAAAAAAAAAAAAIwFsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-18T09:48:27.03Z",
               "EditorCaption": ""
             }
           ]
